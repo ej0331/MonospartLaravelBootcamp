@@ -15,13 +15,11 @@ class ChirpController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index(): Response
+    public function index()
     {
         //
         // return response('Hello, World!');
-        return Inertia::render('Index', [
-            'chirps' => Chirp::with('user:id,name')->latest()->get(),
-        ]);
+        return response()->json(Chirp::with('user')->get());
     }
 
     /**
@@ -40,7 +38,7 @@ class ChirpController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request): RedirectResponse
+    public function store(Request $request)
     {
         //
         $validated = $request->validate([
@@ -49,7 +47,7 @@ class ChirpController extends Controller
 
         $request->user()->chirps()->create($validated);
 
-        return redirect(route('chirps.index'));
+        return response()->json(null);
     }
     /**
      * Display the specified resource.
@@ -80,17 +78,16 @@ class ChirpController extends Controller
      * @param  \App\Models\Chirp  $chirp
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Chirp $chirp): RedirectResponse
+    public function update(Request $request, $id)
     {
-        $this->authorize('update', $chirp);
-
+        $chirp = Chirp::find($id);
         $validated = $request->validate([
             'message' => 'required|string|max:255',
         ]);
 
         $chirp->update($validated);
 
-        return redirect(route('chirps.index'));
+        return response()->json(null);
     }
 
     /**
@@ -99,12 +96,12 @@ class ChirpController extends Controller
      * @param  \App\Models\Chirp  $chirp
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Chirp $chirp): RedirectResponse
+    public function destroy(Request $request, $id)
     {
-        $this->authorize('delete', $chirp);
- 
+        $chirp = Chirp::find($id);
+
         $chirp->delete();
- 
-        return redirect(route('chirps.index'));
+
+        return response()->json(null);
     }
 }
