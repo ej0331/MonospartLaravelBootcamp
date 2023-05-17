@@ -49,6 +49,17 @@ class ChirpController extends Controller
 
         return response()->json(null);
     }
+    public function anonymousStore(Request $request)
+    {
+        //
+        $validated = $request->validate([
+            'message' => 'required|string|max:255',
+        ]);
+
+        Chirp::create($validated);
+
+        return response()->json(null);
+    }
     /**
      * Display the specified resource.
      *
